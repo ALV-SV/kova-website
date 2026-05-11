@@ -1,26 +1,132 @@
 @import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --font-serif: var(--font-dm-serif), Georgia, serif;
+  --font-sans: var(--font-dm-sans), "DM Sans", sans-serif;
+  
+  --color-obsidian: #04342C;
+  --color-slate: #2C2C2A;
+  --color-stone: #F5F4F0;
+  --color-vitality: #1D9E75;
+  --color-mist: #9FE1CB;
+  --color-signal: #EF9F27;
+}
+
+@theme daisyui {
+  --color-primary: #1D9E75;
+  --color-primary-content: #F5F4F0;
+  --color-secondary: #9FE1CB;
+  --color-accent: #EF9F27;
+  --color-neutral: #2C2C2A;
+  --color-base-100: #04342C;
+  --color-base-200: #2C2C2A;
+  --color-base-300: #1D2420;
+  --color-base-content: #F5F4F0;
+  --color-info: #1D9E75;
+  --color-success: #1D9E75;
+  --color-warning: #EF9F27;
+  --color-error: #D64545;
+}
+
+[data-theme="kova"] {
+  --p: 158 85% 36%;
+  --pf: 158 85% 31%;
+  --pc: 42 10% 96%;
+  --s: 158 50% 75%;
+  --sf: 158 50% 70%;
+  --sc: 158 30% 15%;
+  --a: 36 90% 55%;
+  --af: 36 90% 50%;
+  --ac: 36 20% 10%;
+  --n: 0 5% 20%;
+  --nf: 0 5% 15%;
+  --nc: 42 10% 96%;
+  --b1: 158 60% 10%;
+  --b2: 0 5% 22%;
+  --b3: 0 5% 18%;
+  --bc: 42 10% 96%;
+  --in: 198 93% 60%;
+  --su: 158 64% 52%;
+  --wa: 43 96% 56%;
+  --er: 0 84% 60%;
+  --rounded-box: 0.25rem;
+  --rounded-btn: 0.25rem;
+  --rounded-badge: 0.25rem;
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+  --btn-focus-scale: 0.98;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.25rem;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-serif: Georgia, serif;
+  --font-sans: "DM Sans", sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background-color: #04342C;
+  color: #F5F4F0;
+}
+
+h1, h2, h3, h4, h5, h6, .font-serif {
+  font-family: var(--font-serif);
+}
+
+.kova-weave {
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(245, 244, 240, 0.03) 10px,
+      rgba(245, 244, 240, 0.03) 11px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 10px,
+      rgba(245, 244, 240, 0.03) 10px,
+      rgba(245, 244, 240, 0.03) 11px
+    );
+}
+
+.colorway-obsidian {
+  background-color: #04342C;
+}
+
+.colorway-stone {
+  background-color: #F5F4F0;
+}
+
+.colorway-vitality {
+  background-color: #1D9E75;
+}
+
+.colorway-signal {
+  background-color: #EF9F27;
+}
+
+.btn-primary-kova {
+  background-color: #1D9E75;
+  border-color: #1D9E75;
+  color: #F5F4F0;
+}
+
+.btn-primary-kova:hover {
+  background-color: #177A5F;
+  border-color: #177A5F;
+}
+
+.btn-ghost-kova {
+  background-color: transparent;
+  border: 1px solid #F5F4F0;
+  color: #F5F4F0;
+}
+
+.btn-ghost-kova:hover {
+  background-color: rgba(245, 244, 240, 0.1);
 }
