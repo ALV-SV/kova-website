@@ -10,15 +10,15 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-[#04342C] border-b border-[#2C2C2A]/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           <div className="flex-shrink-0">
             <Link href="/">
               <Image 
                 src="/kova-logo.svg" 
                 alt="KOVA" 
-                width={80} 
-                height={40}
-                className="h-10 w-auto"
+                width={120} 
+                height={64}
+                className="h-16 w-auto"
               />
             </Link>
           </div>

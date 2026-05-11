@@ -11,9 +11,9 @@ export default function Footer() {
               <Image 
                 src="/kova-logo.svg" 
                 alt="KOVA" 
-                width={80} 
-                height={40}
-                className="h-10 w-auto"
+                width={120} 
+                height={64}
+                className="h-12 w-auto"
               />
             </Link>
             <p className="mt-2 text-sm text-[#F5F4F0]/70 font-[family-name:var(--font-dm-sans)]">
