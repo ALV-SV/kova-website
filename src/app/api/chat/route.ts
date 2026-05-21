@@ -63,8 +63,17 @@ export async function POST(req: NextRequest) {
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    return new Response(`API error: ${error}`, { status: response.status });
+    const errorText = await response.text();
+    let message = "The AI assistant encountered an error. Please try again.";
+    try {
+      const parsed = JSON.parse(errorText);
+      if (parsed.error?.type === "FreeUsageLimitError" || parsed.error?.type === "ModelError") {
+        message = "The AI assistant is temporarily unavailable due to high demand. Please try again in a few minutes.";
+      } else if (parsed.error?.message) {
+        message = parsed.error.message;
+      }
+    } catch {}
+    return Response.json({ error: message }, { status: 503 });
   }
 
   return new Response(response.body, {

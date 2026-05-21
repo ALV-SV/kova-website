@@ -54,7 +54,12 @@ export default function ChatBot() {
         });
 
         if (!response.ok) {
-          throw new Error("API request failed");
+          let msg = "The AI assistant encountered an error. Please try again.";
+          try {
+            const err = await response.json();
+            if (err.error) msg = err.error;
+          } catch {}
+          throw new Error(msg);
         }
 
         const reader = response.body!.getReader();
@@ -90,14 +95,11 @@ export default function ChatBot() {
           { role: "assistant", content: botMessage },
         ]);
         setStreamingContent("");
-      } catch {
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "I'm having trouble connecting right now. Please try again in a moment.";
         setMessages((prev) => [
           ...prev,
-          {
-            role: "assistant",
-            content:
-              "I'm having trouble connecting right now. Please try again in a moment.",
-          },
+          { role: "assistant", content: msg },
         ]);
       } finally {
         setIsLoading(false);
