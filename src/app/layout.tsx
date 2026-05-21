@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
+import ChatBot from "@/components/ChatBot";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="en" data-theme="kova">
       <body className={`${dmSans.variable} ${dmSerif.variable} min-h-full antialiased bg-[#04342C] text-[#F5F4F0]`}>
         {children}
+        <ChatBot />
       </body>
     </html>
   );
