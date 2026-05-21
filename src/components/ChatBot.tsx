@@ -21,6 +21,7 @@ export default function ChatBot() {
   const [isLoading, setIsLoading] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,9 +36,19 @@ export default function ChatBot() {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
+
   const handleSend = useCallback(
     async (content: string) => {
       if (!content.trim() || isLoading) return;
+
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
 
       const userMessage: Message = { role: "user", content };
       const updatedMessages = [...messages, userMessage];
@@ -51,6 +62,7 @@ export default function ChatBot() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ messages: updatedMessages }),
+          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -65,16 +77,20 @@ export default function ChatBot() {
         const reader = response.body!.getReader();
         const decoder = new TextDecoder();
         let botMessage = "";
+        let buffer = "";
 
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
 
-          const chunk = decoder.decode(value);
-          const lines = chunk.split("\n").filter((l) => l.startsWith("data: "));
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
 
           for (const line of lines) {
-            const data = line.replace("data: ", "").trim();
+            const trimmed = line.trim();
+            if (!trimmed.startsWith("data: ")) continue;
+            const data = trimmed.slice(6);
             if (data === "[DONE]") break;
 
             try {
@@ -85,7 +101,7 @@ export default function ChatBot() {
                 setStreamingContent(botMessage);
               }
             } catch {
-              // skip malformed chunks
+              // skip malformed
             }
           }
         }
@@ -96,7 +112,11 @@ export default function ChatBot() {
         ]);
         setStreamingContent("");
       } catch (e) {
-        const msg = e instanceof Error ? e.message : "I'm having trouble connecting right now. Please try again in a moment.";
+        if (e instanceof DOMException && e.name === "AbortError") return;
+        const msg =
+          e instanceof Error
+            ? e.message
+            : "I'm having trouble connecting right now. Please try again in a moment.";
         setMessages((prev) => [
           ...prev,
           { role: "assistant", content: msg },
@@ -104,6 +124,9 @@ export default function ChatBot() {
       } finally {
         setIsLoading(false);
         setStreamingContent("");
+        if (abortRef.current === controller) {
+          abortRef.current = null;
+        }
       }
     },
     [messages, isLoading]
@@ -117,14 +140,14 @@ export default function ChatBot() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <>
       {shouldRender && (
         <div
-          className={`absolute bottom-20 right-0 w-[380px] h-[520px] flex flex-col rounded-box overflow-hidden shadow-2xl bg-slate transition-all duration-250 ease-in-out ${
+          className={`fixed z-50 flex flex-col rounded-box overflow-hidden shadow-2xl bg-slate transition-all duration-250 ease-in-out ${
             isOpen
               ? "opacity-100 scale-100"
               : "opacity-0 scale-95 pointer-events-none"
-          }`}
+          } sm:bottom-24 sm:right-6 sm:w-[380px] sm:h-[520px] max-sm:bottom-20 max-sm:left-3 max-sm:right-3 max-sm:w-auto max-sm:h-[70dvh] max-sm:max-h-[calc(100dvh-6rem)]`}
         >
           <div className="bg-slate px-4 py-3 flex items-center justify-between shrink-0">
             <div>
@@ -234,7 +257,7 @@ export default function ChatBot() {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="btn w-14 h-14 min-h-14 rounded-full bg-vitality text-stone hover:bg-vitality/90 border-none shadow-lg"
+        className="fixed z-50 btn w-14 h-14 min-h-14 rounded-full bg-vitality text-stone hover:bg-vitality/90 border-none shadow-lg sm:bottom-6 sm:right-6 max-sm:bottom-4 max-sm:right-4"
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         {isOpen ? (
@@ -268,6 +291,6 @@ export default function ChatBot() {
           </svg>
         )}
       </button>
-    </div>
+    </>
   );
 }

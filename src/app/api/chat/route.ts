@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 
 const OPENCODE_ZEN_ENDPOINT = "https://opencode.ai/zen/v1/chat/completions";
-const MODEL = "nemotron-3-super-free";
+const MODEL = "deepseek-v4-flash-free";
 
 const SYSTEM_PROMPT = `You are KOVA's product advisor — a precise, science-backed assistant for the KOVA online shop. KOVA is a premium sports performance and injury-prevention brand. Your tone is: confident, restrained, never hype-driven. You never use words like "revolutionary" or "game-changer".
 
@@ -41,7 +41,10 @@ export async function POST(req: NextRequest) {
   const apiKey = process.env.OPENCODE_ZEN_API_KEY;
 
   if (!apiKey) {
-    return new Response("API key not configured. Set OPENCODE_ZEN_API_KEY in .env.local.", { status: 500 });
+    return new Response(
+      "API key not configured. Set OPENCODE_ZEN_API_KEY in .env.local.",
+      { status: 500 },
+    );
   }
 
   const { messages } = await req.json();
@@ -55,10 +58,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       model: MODEL,
       stream: true,
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...messages,
-      ],
+      messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
     }),
   });
 
@@ -67,8 +67,12 @@ export async function POST(req: NextRequest) {
     let message = "The AI assistant encountered an error. Please try again.";
     try {
       const parsed = JSON.parse(errorText);
-      if (parsed.error?.type === "FreeUsageLimitError" || parsed.error?.type === "ModelError") {
-        message = "The AI assistant is temporarily unavailable due to high demand. Please try again in a few minutes.";
+      if (
+        parsed.error?.type === "FreeUsageLimitError" ||
+        parsed.error?.type === "ModelError"
+      ) {
+        message =
+          "The AI assistant is temporarily unavailable due to high demand. Please try again in a few minutes.";
       } else if (parsed.error?.message) {
         message = parsed.error.message;
       }
