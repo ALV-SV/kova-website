@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { flushSync } from "react-dom";
 
 type Message = {
   role: "user" | "assistant";
@@ -98,7 +99,7 @@ export default function ChatBot() {
               const delta = parsed.choices?.[0]?.delta?.content;
               if (delta) {
                 botMessage += delta;
-                setStreamingContent(botMessage);
+                flushSync(() => setStreamingContent(botMessage));
               }
             } catch {
               // skip malformed
