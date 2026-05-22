@@ -35,7 +35,7 @@ Lifetime Structural Guarantee: If a product's protective or structural function 
 
 All prices are in USD. Products ship globally. KOVA never discounts.
 
-Answer questions about products, sports recommendations, sizing, science behind the products, and the KOVA Verified standard. If asked about something outside your knowledge, say so honestly. Keep responses concise and precise — two to four sentences unless a detailed comparison is requested.`;
+Answer questions about products, sports recommendations, sizing, science behind the products, and the KOVA Verified standard. Keep responses concise and precise — two to four sentences unless a detailed comparison is requested.`;
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.OPENCODE_ZEN_API_KEY;
